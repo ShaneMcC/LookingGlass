@@ -3,14 +3,14 @@
 This is a PHP Looking Glass that is designed to support multiple types of router.
 If you don't know what a Looking Glass is, you probably don't need this.
 
-=== Supported Routers ===
+== Supported Routers ==
 
 * Quagga //(via ssh)//
 
 Currently, support is limited to what I have access to. If you want support for something that isn't, then please provide access to the Router OS in question. (Read-Only access is all that is required.)
 
 
-=== Installation ===
+== Installation ==
 
 Installation is simple, place all the files in a web-accessible directory and edit the config file.
 
@@ -31,13 +31,13 @@ If you are using ssh-based routers, you will need the [[http://php.net/manual/en
 	pecl install ssh2
 }}}
 
-=== Configuration ===
+== Configuration ==
 
 Configuration should be done in "config.local.php" which will be included by the script, all available settings are described in config.php which can be used as a starting guide.
 
 Once finalised I will flesh out this section a bit more.
 
-=== Comments, Bugs, Feature Requests etc. ===
+== Comments, Bugs, Feature Requests etc. ==
 
 Bugs and Feature Requests should be raised on the [[https://github.com/ShaneMcC/LookingGlass/issues|issue tracker on github]]. I'm happy to recieve code pull requests via github.
 
