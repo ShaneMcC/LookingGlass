@@ -10,6 +10,14 @@
 		private $lastError = '';
 
 		/**
+		 * Create a new Command.
+		 */
+		public function __construct() {
+			// Do nothing for now. This exists to give sub classes something to call
+			// with parent::__construct();
+		}
+
+		/**
 		 * Check that the given arguments are valid.
 		 *
 		 * @param $args Arguments for the command as a string.

@@ -93,6 +93,6 @@
 	}
 
 	if (function_exists('registerCommand')) {
-		registerCommand('traceroute <IP>', new TraceCommand());
+		registerCommand('traceroute', new TraceCommand());
 	}
 ?>
