@@ -45,7 +45,7 @@
 			$validDomain = $this->validDomain($args);
 
 			if (!$validDomain) { $this->setError('"'.$args.'" is not a valid domain.'); }
-			if (!$validIP) { $this->setError('"'.$args.'" is not a valid ip address.'); }
+			if (!$validIP) { $this->setError('"'.$args.'" is not a valid ' . $this->type . ' address.'); }
 
 			return $validIP || $validDomain;
 		}

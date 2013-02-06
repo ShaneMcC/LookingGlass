@@ -26,7 +26,7 @@
 			} else {
 				$validIP = filter_var($args, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
 			}
-			if (!$validIP) { $this->setError('"'.$args.'" is not a valid ip address.'); }
+			if (!$validIP) { $this->setError('"'.$args.'" is not a valid ' . $this->type . ' address.'); }
 
 			return $validIP;
 		}

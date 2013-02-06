@@ -22,6 +22,9 @@
 	/** Our Website URL. */
 	$config['url'] = 'https://github.com/ShaneMcC/LookingGlass';
 
+	/** IP Addresses to treat as Admins. */
+	$config['admin'] = array('192.168.0.1', '10.0.0.5');
+
 	/**
 	 * Link to use to show links to AS numbers in the result of some
 	 * commands.

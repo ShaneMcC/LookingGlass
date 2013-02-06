@@ -1,5 +1,4 @@
 <?php
-
 	/***********************************************************************
 	 * Load required classes.
 	 ***********************************************************************/
@@ -7,6 +6,12 @@
 		require_once($class);
 	}
 	unset($class);
+
+	/***********************************************************************
+	 * Load config file.
+	 ***********************************************************************/
+	$config = array('ouras' => '', 'company' => '');
+	require_once('config.php');
 
 	/***********************************************************************
 	 * Load Commands
@@ -97,11 +102,65 @@
 		return $defaultRouter;
 	}
 
+	/**
+	 * Check if the current user is an admin.
+	 *
+	 * @return True if the user is an admin.
+	 */
+	function isAdmin() {
+		global $config;
+		return isset($_SERVER['REMOTE_ADDR']) && isset($config['admin']) && in_array($_SERVER['REMOTE_ADDR'], $config['admin']);
+	}
+
+	/**
+	 * Get a link pointing to the requested command.
+	 */
+	function getLink($command = null, $input = null, $protocol = null, $router = null) {
+		global $defaultCommand, $commands, $routerMap, $defaultRouter;
+		$params = array();
+
+		$params['command'] = $defaultCommand;
+		if ($command != null) {
+			foreach ($commands as $id => $c) {
+				if (strtolower($command) == strtolower($c['Name']) || $command == $id) {
+					$params['command'] = $id;
+					break;
+				}
+			}
+		}
+		if ($protocol == null) { $protocol = $_REQUEST['protocol']; }
+		$params['protocol'] = ($protocol == 'ipv6') ? 'ipv6' : 'ipv4';
+
+		$params['router'] = isset($_REQUEST['router']) ? $_REQUEST['router'] : $defaultRouter;
+		if ($router !== null) {
+			foreach ($routerMap as $id => $r) {
+				if (strtolower($router) == strtolower($r['Name']) || $router == $id) {
+					$params['router'] = $id;
+					break;
+				}
+			}
+		}
+
+		$params['runcommand'] = 'Submit Query';
+
+		if ($input !== null) {
+			$params['input'] = $input;
+		}
+
+		$result = array();
+		foreach ($params as $k => $v) {
+			$result[] = urlencode($k) . '=' . urlencode($v);
+		}
+		return  'index.php?' . implode('&', $result);
+	}
+
 	/***********************************************************************
-	 * Load config file.
+	 * Load routers file.
 	 ***********************************************************************/
-	$config = array('ouras' => '', 'company' => '');
-	require_once('config.php');
+	if (file_exists(dirname(__FILE__) . '/routers.php')) {
+		resetRouters();
+		require_once(dirname(__FILE__) . '/routers.php');
+	}
 
 	$hasResult = false;
 	/***********************************************************************
@@ -195,6 +254,15 @@
 					border-left: 4px solid black;
 					background: #EEE;
 				}
+
+				div.result div.output span.bad {
+					color: red;
+				}
+
+				div.result div.output span.good {
+					color: green;
+					font-weight: bold;
+				}
 			</STYLE>
 		<?php }
 
@@ -265,6 +333,7 @@
 					$runcmd['router'] = isset($_REQUEST['router']) && isset($routerMap[$_REQUEST['router']]) ? $routerMap[$_REQUEST['router']] : null;
 					$runcmd['command'] = isset($_REQUEST['command']) && isset($commands[$_REQUEST['command']]) ? $commands[$_REQUEST['command']] : null;
 					$runcmd['input'] = isset($_REQUEST['input']) && isset($_REQUEST['input']) ? $_REQUEST['input'] : '';
+					$runcmd['protocol'] = isset($_REQUEST['protocol']) ? $_REQUEST['protocol'] : 'ipv4';
 
 					// Run the command here to get the output.
 					ob_start();
@@ -275,6 +344,7 @@
 						$runcmd['error'] = 'No valid command selected.';
 						$runcmd['result'] = FALSE;
 					} else {
+						$runcmd['command']['Object']->setProtocol($runcmd['protocol']);
 						$runcmd['router']['Object']->connect();
 						$runcmd['commandstring'] = $runcmd['command']['Object']->getCommandString($runcmd['router']['Object'], $runcmd['input']);
 						$runcmd['result'] = $runcmd['command']['Object']->run($runcmd['router']['Object'], $runcmd['input']);
@@ -285,7 +355,7 @@
 				?>
 
 				<?php if ($showForm) { ?>
-					<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+					<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
 						<table class="commandtable center"  width="800px">
 							<tr>
 								<th width="33%">Command</th>
@@ -310,7 +380,18 @@
 											<td style="text-align: left">
 												<?php echo htmlspecialchars($command['Name']); ?>
 											</td>
+										</tr>
 									<? } ?>
+										<tr><td colspan=2>&nbsp;</td></tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td>Protocol:
+												<select name="protocol">
+													<option value="ipv4" <?php echo (empty($_REQUEST['protocol']) || $_REQUEST['protocol'] == 'ipv4' ? 'selected' : '');?>>IPv4</option>
+													<option value="ipv6" <?php echo (!empty($_REQUEST['protocol']) && $_REQUEST['protocol'] == 'ipv6' ? 'selected' : '');?>>IPv6</option>
+												</select>
+											</td>
+										</tr>
 									</table>
 								</td>
 								<td>

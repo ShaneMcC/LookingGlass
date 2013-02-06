@@ -1,0 +1,41 @@
+<?php
+	/**
+	 * Examples on how to create routers.
+	 */
+
+	// Routers can be organised into groups.
+	// Groups are created using registerRouterGroup($id, $name);
+	//
+	// - The ID is an internal ID used when reigstering routers, and not
+	//   displayed unless no description is given.
+	//
+	// - The description is used in the router drop down.
+	//
+	// If only one group exists, then no group names are shown in the drop
+	// down.
+	registerRouterGroup('London', 'London Routers');
+	registerRouterGroup('Manchester', 'Manchester Routers');
+
+
+	// Routers are registered using "registerRouter"
+	//
+	// This takes 3 parameters, a router description, a router object, and
+	// a router group id. If the group ID is a group that is not already
+	// created, it will be created as registerRouterGroup($group, $group);
+	// If no group is given, then the group will be "Routers".
+	//
+	// The default router can be set by wrapping this with setDefaultRouter
+	//
+	// Router objects can be created inline or in advance depending on
+	// your needs.
+	//
+	// In general constructor for a router takes 4 parameters:
+	//   - IP Address or hostname
+	//   - Login Username
+	//   - authInfo Array (See above)
+	//   - routerInfo Array (See above)
+	registerRouter('London Router 1', new QuaggaRouter('192.168.0.1', 'admin', $config['authInfo'], $config['routerInfo']), 'London');
+	setDefaultRouter(registerRouter('London Router 2', new QuaggaRouter('192.168.1.2', 'admin', $config['authInfo'], $config['routerInfo']), 'London'));
+	registerRouter('Manchester Router 1', new QuaggaRouter('192.168.2.1', 'admin', $config['authInfo'], $config['routerInfo']), 'Manchester');
+
+?>
